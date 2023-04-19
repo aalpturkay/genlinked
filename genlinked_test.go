@@ -96,3 +96,42 @@ func TestIsLinkedListEmpty(t *testing.T) {
 
 	assert.Equal(t, true, ll.IsEmpty())
 }
+
+func TestGetLast(t *testing.T) {
+	type Mana int
+	const maxint = ^uint(0) >> 1
+	ll := &LinkedList[Mana]{}
+
+	ll.Add(Mana(18))
+	ll.Add(Mana(81))
+	ll.Add(Mana(19))
+	ll.Add(Mana(maxint))
+
+	lastItem, err := ll.GetLast()
+	if err != nil {
+		t.Errorf("Err: %v\n", err)
+	}
+	assert.Equal(t, Mana(maxint), lastItem)
+}
+
+func TestGetFirst(t *testing.T) {
+	type Warrior struct {
+		name  string
+		power int
+	}
+
+	urundir := Warrior{"urundir", 999}
+	aragorn := Warrior{"aragorn", 9999}
+
+	ll := &LinkedList[Warrior]{}
+
+	ll.Add(aragorn)
+	ll.Add(urundir)
+
+	firstItem, err := ll.GetFirst()
+
+	if err != nil {
+		t.Errorf("Err: %v\n", err)
+	}
+	assert.Equal(t, aragorn, firstItem)
+}
