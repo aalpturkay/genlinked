@@ -3,6 +3,7 @@ package genlinked
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 var (
@@ -18,9 +19,13 @@ type node[T interface{}] struct {
 type LinkedList[T interface{}] struct {
 	head   *node[T]
 	length int
+	lock   sync.Mutex
 }
 
 func (ll *LinkedList[T]) Add(data T) {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	newNode := &node[T]{
 		data: data,
 		next: nil,
@@ -99,6 +104,9 @@ func (ll *LinkedList[T]) IsEmpty() bool {
 }
 
 func (ll *LinkedList[T]) String() string {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	info := ""
 
 	if !ll.IsEmpty() {
