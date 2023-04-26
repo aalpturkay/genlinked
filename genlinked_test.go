@@ -135,3 +135,13 @@ func TestGetFirst(t *testing.T) {
 	}
 	assert.Equal(t, aragorn, firstItem)
 }
+
+func TestString(t *testing.T) {
+	movies := &LinkedList[string]{}
+
+	movies.Add("Harry Potter")
+
+	movies.Add("LOTR")
+
+	fmt.Println(movies)
+}

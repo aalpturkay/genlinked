@@ -113,10 +113,11 @@ func (ll *LinkedList[T]) String() string {
 		currN := ll.head
 
 		for {
-			info += fmt.Sprintf(" %v ", currN.data)
 			if currN.next == nil {
+				info += fmt.Sprintf("%v -> nil", currN.data)
 				break
 			}
+			info += fmt.Sprintf("%v -> ", currN.data)
 			currN = currN.next
 		}
 	}
