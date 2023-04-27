@@ -7,9 +7,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewLinkedList(t *testing.T) {
+	ll := NewLinkedList[bool]()
+
+	ll.Add(true)
+
+	assert.Equal(t, 1, ll.Size())
+}
+
+func TestNewLinkedListWithItems(t *testing.T) {
+	categories := NewLinkedListWithItems([]string{"burger", "pizza", "wrap", "icecream"})
+
+	assert.Equal(t, 4, categories.Size())
+}
+
 func TestAddElemToLinkedList(t *testing.T) {
 
-	ll := &LinkedList[string]{}
+	ll := NewLinkedList[string]()
 
 	ll.Add("warrior")
 
@@ -26,7 +40,7 @@ func TestAddElemToLinkedList(t *testing.T) {
 
 func TestGetElemByIndexFromLinkedList(t *testing.T) {
 
-	ll := &LinkedList[float64]{}
+	ll := NewLinkedList[float64]()
 
 	ll.Add(3)
 	ll.Add(1.1)
@@ -42,7 +56,7 @@ func TestGetElemByIndexFromLinkedList(t *testing.T) {
 
 func TestGetElemByIndexWhenIndexOutOfRangeFromLinkedList(t *testing.T) {
 
-	ll := &LinkedList[string]{}
+	ll := NewLinkedList[string]()
 
 	ll.Add("frodo")
 	ll.Add("sam")
@@ -55,7 +69,7 @@ func TestGetElemByIndexWhenIndexOutOfRangeFromLinkedList(t *testing.T) {
 
 func TestGetElemByIndexFromLinkedListWhenListEmpty(t *testing.T) {
 
-	ll := &LinkedList[string]{}
+	ll := NewLinkedList[string]()
 
 	_, err := ll.Get(0)
 
@@ -64,7 +78,7 @@ func TestGetElemByIndexFromLinkedListWhenListEmpty(t *testing.T) {
 
 func TestGetSize(t *testing.T) {
 
-	ll := &LinkedList[string]{}
+	ll := NewLinkedList[string]()
 
 	ll.Add("warrior")
 
@@ -76,8 +90,7 @@ func TestGetSize(t *testing.T) {
 }
 
 func TestPrintLinkedList(t *testing.T) {
-	ll := &LinkedList[string]{}
-
+	ll := NewLinkedList[string]()
 	ll.Add("warrior")
 
 	ll.Add("mage")
@@ -92,7 +105,7 @@ func TestPrintLinkedList(t *testing.T) {
 }
 
 func TestIsLinkedListEmpty(t *testing.T) {
-	ll := &LinkedList[string]{}
+	ll := NewLinkedList[string]()
 
 	assert.Equal(t, true, ll.IsEmpty())
 }
@@ -100,7 +113,7 @@ func TestIsLinkedListEmpty(t *testing.T) {
 func TestGetLast(t *testing.T) {
 	type Mana int
 	const maxint = ^uint(0) >> 1
-	ll := &LinkedList[Mana]{}
+	ll := NewLinkedList[Mana]()
 
 	ll.Add(Mana(18))
 	ll.Add(Mana(81))
@@ -123,7 +136,7 @@ func TestGetFirst(t *testing.T) {
 	urundir := Warrior{"urundir", 999}
 	aragorn := Warrior{"aragorn", 9999}
 
-	ll := &LinkedList[Warrior]{}
+	ll := NewLinkedList[Warrior]()
 
 	ll.Add(aragorn)
 	ll.Add(urundir)
@@ -137,11 +150,44 @@ func TestGetFirst(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	movies := &LinkedList[string]{}
+	movies := NewLinkedList[string]()
 
 	movies.Add("Harry Potter")
-
 	movies.Add("LOTR")
 
 	fmt.Println(movies)
+}
+
+func TestIsEmpty(t *testing.T) {
+	langs := NewLinkedList[string]()
+
+	langs.Add("ruby")
+
+	empty := langs.IsEmpty()
+
+	assert.False(t, empty)
+}
+
+func TestRemove(t *testing.T) {
+	series := NewLinkedList[string]()
+
+	series.Add("KV")
+	series.Add("Breaking Bad")
+	series.Add("GOT")
+
+	series.Remove(1)
+	fmt.Println(series)
+	assert.Equal(t, 2, series.Size())
+}
+
+func TestRemoveWhenIndexOOR(t *testing.T) {
+	series := NewLinkedList[string]()
+
+	series.Add("KV")
+	series.Add("Breaking Bad")
+	series.Add("GOT")
+
+	err := series.Remove(8)
+	fmt.Println(series)
+	assert.Error(t, errIndexOutOfRange, err)
 }

@@ -11,15 +11,31 @@ var (
 	errEmptyList       error = errors.New("list is empty")
 )
 
-type node[T interface{}] struct {
+type node[T any] struct {
 	data T
 	next *node[T]
 }
 
-type LinkedList[T interface{}] struct {
+// LinkedList is a generic and thread-safe implementation of linked-list data structure.
+// It can initialized with any type.
+type LinkedList[T any] struct {
 	head   *node[T]
 	length int
 	lock   sync.Mutex
+}
+
+// Creates an empty linked-list.
+func NewLinkedList[T any]() *LinkedList[T] {
+	return &LinkedList[T]{}
+}
+
+// Creates a linked-list with a collection of items.
+func NewLinkedListWithItems[T any](items []T) *LinkedList[T] {
+	ll := NewLinkedList[T]()
+	for _, v := range items {
+		ll.Add(v)
+	}
+	return ll
 }
 
 func (ll *LinkedList[T]) Add(data T) {
@@ -46,6 +62,35 @@ func (ll *LinkedList[T]) Add(data T) {
 	}
 
 	ll.length++
+}
+
+func (ll *LinkedList[T]) Remove(index int) error {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
+	if index < 0 || index >= ll.length {
+		return errIndexOutOfRange
+	}
+
+	if index == 0 {
+		if ll.length == 1 {
+			ll.head = nil
+		} else {
+			ll.head = ll.head.next
+		}
+
+	} else {
+		currN := ll.head
+
+		for i := 0; i < index-1; i++ {
+			currN = currN.next
+		}
+
+		currN.next = currN.next.next
+	}
+
+	ll.length--
+	return nil
 }
 
 func (ll *LinkedList[T]) Get(index int) (T, error) {
