@@ -38,6 +38,7 @@ func NewLinkedListWithItems[T any](items []T) *LinkedList[T] {
 	return ll
 }
 
+// Adds T type data into linked-list.
 func (ll *LinkedList[T]) Add(data T) {
 	ll.lock.Lock()
 	defer ll.lock.Unlock()
@@ -64,6 +65,7 @@ func (ll *LinkedList[T]) Add(data T) {
 	ll.length++
 }
 
+// Removes an elem. from linked-list by given index.
 func (ll *LinkedList[T]) Remove(index int) error {
 	ll.lock.Lock()
 	defer ll.lock.Unlock()
@@ -93,6 +95,7 @@ func (ll *LinkedList[T]) Remove(index int) error {
 	return nil
 }
 
+// Gets an elem. from linked-list by given index.
 func (ll *LinkedList[T]) Get(index int) (T, error) {
 	ll.lock.Lock()
 	defer ll.lock.Unlock()
@@ -112,6 +115,7 @@ func (ll *LinkedList[T]) Get(index int) (T, error) {
 	return currN.data, nil
 }
 
+// Gets first elem.
 func (ll *LinkedList[T]) GetFirst() (T, error) {
 	ll.lock.Lock()
 	defer ll.lock.Unlock()
@@ -127,6 +131,7 @@ func (ll *LinkedList[T]) GetFirst() (T, error) {
 	return data, nil
 }
 
+// Gets last elem.
 func (ll *LinkedList[T]) GetLast() (T, error) {
 	ll.lock.Lock()
 	defer ll.lock.Unlock()
@@ -149,17 +154,13 @@ func (ll *LinkedList[T]) GetLast() (T, error) {
 	return currN.data, nil
 }
 
+// Returns length of linked-list.
 func (ll *LinkedList[T]) Size() int {
-	ll.lock.Lock()
-	defer ll.lock.Unlock()
-
 	return ll.length
 }
 
+// Returns a bool that indicates whether linked-list size is equal to zero.
 func (ll *LinkedList[T]) IsEmpty() bool {
-	ll.lock.Lock()
-	defer ll.lock.Unlock()
-
 	return ll.Size() == 0
 }
 
