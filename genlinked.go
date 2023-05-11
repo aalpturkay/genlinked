@@ -94,6 +94,9 @@ func (ll *LinkedList[T]) Remove(index int) error {
 }
 
 func (ll *LinkedList[T]) Get(index int) (T, error) {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	var data T
 
 	if index < 0 || index >= ll.length {
@@ -110,6 +113,9 @@ func (ll *LinkedList[T]) Get(index int) (T, error) {
 }
 
 func (ll *LinkedList[T]) GetFirst() (T, error) {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	var data T
 
 	if ll.IsEmpty() {
@@ -122,6 +128,9 @@ func (ll *LinkedList[T]) GetFirst() (T, error) {
 }
 
 func (ll *LinkedList[T]) GetLast() (T, error) {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	var data T
 
 	if ll.IsEmpty() {
@@ -141,10 +150,16 @@ func (ll *LinkedList[T]) GetLast() (T, error) {
 }
 
 func (ll *LinkedList[T]) Size() int {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	return ll.length
 }
 
 func (ll *LinkedList[T]) IsEmpty() bool {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
+
 	return ll.Size() == 0
 }
 
