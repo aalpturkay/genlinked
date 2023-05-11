@@ -1,4 +1,4 @@
-# Microposts App
+# GenLinked
 
 Golang generic linked-list implementation using mutexes for thread-safety.
 
