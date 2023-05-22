@@ -26,7 +26,7 @@ type LinkedList[T any] struct {
 
 // Creates an empty linked-list.
 func NewLinkedList[T any]() *LinkedList[T] {
-	return &LinkedList[T]{}
+	return new(LinkedList[T]).Initialize()
 }
 
 // Creates a linked-list with a collection of items.
@@ -35,6 +35,13 @@ func NewLinkedListWithItems[T any](items []T) *LinkedList[T] {
 	for _, v := range items {
 		ll.Add(v)
 	}
+	return ll
+}
+
+func (ll *LinkedList[T]) Initialize() *LinkedList[T] {
+	ll.head = nil
+	ll.length = 0
+
 	return ll
 }
 
@@ -63,6 +70,29 @@ func (ll *LinkedList[T]) Add(data T) {
 	}
 
 	ll.length++
+}
+
+func (ll *LinkedList[T]) InsertAfter(index int, data T) error {
+
+	if index >= ll.Size() {
+		return errIndexOutOfRange
+	}
+
+	currN := ll.head
+
+	for i := 0; i < index; i++ {
+		currN = currN.next
+	}
+
+	tempN := currN.next
+	currN.next = &node[T]{
+		data: data,
+		next: nil,
+	}
+
+	currN.next.next = tempN
+
+	return nil
 }
 
 // Removes an elem. from linked-list by given index.

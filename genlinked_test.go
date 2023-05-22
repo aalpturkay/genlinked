@@ -3,6 +3,7 @@ package genlinked
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -190,4 +191,77 @@ func TestRemoveWhenIndexOOR(t *testing.T) {
 	err := series.Remove(8)
 	fmt.Println(series)
 	assert.Error(t, errIndexOutOfRange, err)
+}
+
+func TestCalAddTime(t *testing.T) {
+	startT := time.Now()
+	ll := NewLinkedList[int]()
+
+	size := 5_000
+
+	for i := 0; i < size; i++ {
+		ll.Add(1)
+	}
+
+	endT := time.Now()
+
+	deltaT := endT.Sub(startT)
+
+	fmt.Printf("linked-list deltaT: %v\n", deltaT)
+}
+
+func TestInsert(t *testing.T) {
+	categories := NewLinkedListWithItems([]string{"burger", "pizza", "wrap", "icecream"})
+
+	err := categories.InsertAfter(3, "döner")
+	if err != nil {
+		t.Errorf("err: %s\n", err.Error())
+		return
+	}
+
+	fmt.Println(categories)
+}
+
+// it takes: ~42 nanoseconds
+func TestInsertAfterTime(t *testing.T) {
+	ll := NewLinkedList[int]()
+
+	size := 5_000
+
+	for i := 0; i < size; i++ {
+		ll.Add(1)
+	}
+
+	startT := time.Now()
+
+	err := ll.InsertAfter(3, 10)
+	if err != nil {
+		t.Errorf("err: %s\n", err.Error())
+		return
+	}
+
+	endT := time.Now()
+
+	deltaT := endT.Sub(startT)
+
+	fmt.Printf("linked-list deltaT: %v\n", deltaT.Nanoseconds())
+}
+
+// it takes: ~13750 nanoseconds
+func TestInsertElemSliceTime(t *testing.T) {
+	numbers := make([]int, 0)
+
+	for i := 0; i < 5_000; i++ {
+		numbers = append(numbers, 1)
+	}
+	startT := time.Now()
+
+	newData := 6
+	targetIndex := 3
+
+	numbers = append(numbers[:targetIndex+1], append([]int{newData}, numbers[targetIndex+1:]...)...)
+	endT := time.Now()
+
+	deltaT := endT.Sub(startT)
+	fmt.Printf("slice deltaT: %v\n", deltaT.Nanoseconds())
 }
