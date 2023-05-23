@@ -12,16 +12,16 @@ var (
 )
 
 type node[T any] struct {
-	data T
-	next *node[T]
-	prev *node[T]
+	Data T
+	Next *node[T]
+	Prev *node[T]
 }
 
 // LinkedList is a generic and thread-safe implementation of linked-list data structure.
 // It can initialized with any type.
 type LinkedList[T any] struct {
-	head   *node[T]
-	tail   *node[T]
+	Head   *node[T]
+	Tail   *node[T]
 	length int
 	lock   sync.Mutex
 }
@@ -41,8 +41,8 @@ func NewLinkedListWithItems[T any](items []T) *LinkedList[T] {
 }
 
 func (ll *LinkedList[T]) Initialize() *LinkedList[T] {
-	ll.head = nil
-	ll.tail = nil
+	ll.Head = nil
+	ll.Tail = nil
 	ll.length = 0
 
 	return ll
@@ -54,18 +54,18 @@ func (ll *LinkedList[T]) Add(data T) {
 	defer ll.lock.Unlock()
 
 	newNode := &node[T]{
-		data: data,
-		next: nil,
-		prev: nil,
+		Data: data,
+		Next: nil,
+		Prev: nil,
 	}
 
-	if ll.head == nil {
-		ll.head = newNode
-		ll.tail = newNode
+	if ll.Head == nil {
+		ll.Head = newNode
+		ll.Tail = newNode
 	} else {
-		newNode.prev = ll.tail
-		ll.tail.next = newNode
-		ll.tail = newNode
+		newNode.Prev = ll.Tail
+		ll.Tail.Next = newNode
+		ll.Tail = newNode
 	}
 
 	ll.length++
@@ -80,28 +80,28 @@ func (ll *LinkedList[T]) InsertAfter(index int, data T) error {
 	}
 
 	if ll.Size()-1 == index {
-		ll.tail.next = &node[T]{
-			data: data,
-			next: nil,
+		ll.Tail.Next = &node[T]{
+			Data: data,
+			Next: nil,
 		}
-		ll.tail = ll.tail.next
+		ll.Tail = ll.Tail.Next
 
 		return nil
 	}
 
-	currN := ll.head
+	currN := ll.Head
 
 	for i := 0; i < index; i++ {
-		currN = currN.next
+		currN = currN.Next
 	}
 
-	tempN := currN.next
-	currN.next = &node[T]{
-		data: data,
-		next: nil,
+	tempN := currN.Next
+	currN.Next = &node[T]{
+		Data: data,
+		Next: nil,
 	}
 
-	currN.next.next = tempN
+	currN.Next.Next = tempN
 
 	return nil
 }
@@ -117,24 +117,24 @@ func (ll *LinkedList[T]) Remove(index int) error {
 
 	if index == 0 {
 		if ll.length == 1 {
-			ll.head = nil
-			ll.tail = nil
+			ll.Head = nil
+			ll.Tail = nil
 		} else {
-			ll.head = ll.head.next
+			ll.Head = ll.Head.Next
 		}
 
 	} else {
-		currN := ll.head
+		currN := ll.Head
 
 		for i := 0; i < index-1; i++ {
-			if currN == nil || currN.next == nil {
+			if currN == nil || currN.Next == nil {
 				return errIndexOutOfRange
 			}
-			currN = currN.next
+			currN = currN.Next
 		}
 
-		if currN.next != nil {
-			currN.next = currN.next.next
+		if currN.Next != nil {
+			currN.Next = currN.Next.Next
 		}
 	}
 
@@ -153,13 +153,13 @@ func (ll *LinkedList[T]) Get(index int) (T, error) {
 		return data, errIndexOutOfRange
 	}
 
-	currN := ll.head
+	currN := ll.Head
 
 	for i := 0; i < index; i++ {
-		currN = currN.next
+		currN = currN.Next
 	}
 
-	return currN.data, nil
+	return currN.Data, nil
 }
 
 // Gets first elem.
@@ -173,7 +173,7 @@ func (ll *LinkedList[T]) GetFirst() (T, error) {
 		return data, errEmptyList
 	}
 
-	data = ll.head.data
+	data = ll.Head.Data
 
 	return data, nil
 }
@@ -189,7 +189,7 @@ func (ll *LinkedList[T]) GetLast() (T, error) {
 		return data, errEmptyList
 	}
 
-	return ll.tail.data, nil
+	return ll.Tail.Data, nil
 }
 
 // Returns length of linked-list.
@@ -209,15 +209,15 @@ func (ll *LinkedList[T]) String() string {
 	info := ""
 
 	if !ll.IsEmpty() {
-		currN := ll.head
+		currN := ll.Head
 
 		for {
-			if currN.next == nil {
-				info += fmt.Sprintf("%v -> nil", currN.data)
+			if currN.Next == nil {
+				info += fmt.Sprintf("%v -> nil", currN.Data)
 				break
 			}
-			info += fmt.Sprintf("%v -> ", currN.data)
-			currN = currN.next
+			info += fmt.Sprintf("%v -> ", currN.Data)
+			currN = currN.Next
 		}
 	}
 

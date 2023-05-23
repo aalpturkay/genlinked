@@ -308,11 +308,11 @@ func TestThreadSafety(t *testing.T) {
 
 	wg.Wait()
 
-	curr := ll.head
+	curr := ll.Head
 	for curr != nil {
-		if curr.next != nil && curr.data >= curr.next.data {
+		if curr.Next != nil && curr.Data >= curr.Next.Data {
 			t.Errorf("list must be in sorted order.")
 		}
-		curr = curr.next
+		curr = curr.Next
 	}
 }
