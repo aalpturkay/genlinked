@@ -2,6 +2,7 @@ package genlinked
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -244,7 +245,7 @@ func TestInsertAfterTime(t *testing.T) {
 
 	deltaT := endT.Sub(startT)
 
-	fmt.Printf("linked-list deltaT: %v\n", deltaT.Nanoseconds())
+	fmt.Printf("linked-list deltaT: %v nsec\n", deltaT.Nanoseconds())
 }
 
 // it takes: ~13750 nanoseconds
@@ -263,5 +264,55 @@ func TestInsertElemSliceTime(t *testing.T) {
 	endT := time.Now()
 
 	deltaT := endT.Sub(startT)
-	fmt.Printf("slice deltaT: %v\n", deltaT.Nanoseconds())
+	fmt.Printf("slice deltaT: %v nsec\n", deltaT.Nanoseconds())
+}
+
+func TestInsertEnfOfTheList(t *testing.T) {
+	ll := NewLinkedListWithItems([]string{"aykut", "alp"})
+	err := ll.InsertAfter(ll.Size()-1, "turkay")
+	if err != nil {
+		t.Errorf("err: %s\n", err.Error())
+		return
+	}
+
+	fmt.Println(ll)
+
+	last, _ := ll.GetLast()
+
+	assert.Equal(t, "turkay", last)
+}
+
+func TestThreadSafety(t *testing.T) {
+	operations := 1_000
+
+	ll := NewLinkedList[int]()
+	fmt.Println(ll.Size())
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		fmt.Println("adding")
+		defer wg.Done()
+		for i := 0; i < operations; i++ {
+			ll.Add(i)
+		}
+	}()
+
+	go func() {
+		fmt.Println("removing")
+		defer wg.Done()
+		for i := 0; i < operations; i++ {
+			ll.Remove(i)
+		}
+	}()
+
+	wg.Wait()
+
+	curr := ll.head
+	for curr != nil {
+		if curr.next != nil && curr.data >= curr.next.data {
+			t.Errorf("list must be in sorted order.")
+		}
+		curr = curr.next
+	}
 }

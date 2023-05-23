@@ -14,12 +14,14 @@ var (
 type node[T any] struct {
 	data T
 	next *node[T]
+	prev *node[T]
 }
 
 // LinkedList is a generic and thread-safe implementation of linked-list data structure.
 // It can initialized with any type.
 type LinkedList[T any] struct {
 	head   *node[T]
+	tail   *node[T]
 	length int
 	lock   sync.Mutex
 }
@@ -40,6 +42,7 @@ func NewLinkedListWithItems[T any](items []T) *LinkedList[T] {
 
 func (ll *LinkedList[T]) Initialize() *LinkedList[T] {
 	ll.head = nil
+	ll.tail = nil
 	ll.length = 0
 
 	return ll
@@ -53,29 +56,37 @@ func (ll *LinkedList[T]) Add(data T) {
 	newNode := &node[T]{
 		data: data,
 		next: nil,
+		prev: nil,
 	}
 
 	if ll.head == nil {
 		ll.head = newNode
-
+		ll.tail = newNode
 	} else {
-		currN := ll.head
-		for {
-			if currN.next == nil {
-				break
-			}
-			currN = currN.next
-		}
-		currN.next = newNode
+		newNode.prev = ll.tail
+		ll.tail.next = newNode
+		ll.tail = newNode
 	}
 
 	ll.length++
 }
 
 func (ll *LinkedList[T]) InsertAfter(index int, data T) error {
+	ll.lock.Lock()
+	defer ll.lock.Unlock()
 
 	if index >= ll.Size() {
 		return errIndexOutOfRange
+	}
+
+	if ll.Size()-1 == index {
+		ll.tail.next = &node[T]{
+			data: data,
+			next: nil,
+		}
+		ll.tail = ll.tail.next
+
+		return nil
 	}
 
 	currN := ll.head
@@ -107,6 +118,7 @@ func (ll *LinkedList[T]) Remove(index int) error {
 	if index == 0 {
 		if ll.length == 1 {
 			ll.head = nil
+			ll.tail = nil
 		} else {
 			ll.head = ll.head.next
 		}
@@ -115,10 +127,15 @@ func (ll *LinkedList[T]) Remove(index int) error {
 		currN := ll.head
 
 		for i := 0; i < index-1; i++ {
+			if currN == nil || currN.next == nil {
+				return errIndexOutOfRange
+			}
 			currN = currN.next
 		}
 
-		currN.next = currN.next.next
+		if currN.next != nil {
+			currN.next = currN.next.next
+		}
 	}
 
 	ll.length--
@@ -172,16 +189,7 @@ func (ll *LinkedList[T]) GetLast() (T, error) {
 		return data, errEmptyList
 	}
 
-	currN := ll.head
-
-	for {
-		if currN.next == nil {
-			break
-		}
-		currN = currN.next
-	}
-
-	return currN.data, nil
+	return ll.tail.data, nil
 }
 
 // Returns length of linked-list.
